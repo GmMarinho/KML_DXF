@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Placemark>
+      <name>Ponto A</name>
+      <description>Primeiro ponto</description>
+      <Point>
+        <coordinates>-46.57421,-21.785741,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Ponto B</name>
+      <Point>
+        <coordinates>-46.57422,-21.785742,0</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
