@@ -8,6 +8,11 @@ from typing import List, Tuple, Optional, Dict
 
 from sklearn.cluster import DBSCAN
 
+try:
+	from tqdm import tqdm  # type: ignore
+except Exception:  # fallback silencioso
+	tqdm = None  # type: ignore
+
 def get_elevations(
 	points: List[Tuple[float, float]],
 	provider: str = 'etopo',
@@ -17,7 +22,9 @@ def get_elevations(
 	enable_cache: bool = False,
 	cache_file: str = 'elev_cache.json',
 	enable_clustering: bool = False,
-	cluster_eps: float = 0.0
+	cluster_eps: float = 0.0,
+	show_progress: bool = False,
+	_stats: Optional[Dict[str, float]] = None
 ) -> List[Optional[float]]:
 	"""
 	Consulta a API OpenTopoData para obter elevações de uma lista de (lat, lon).
@@ -62,16 +69,26 @@ def get_elevations(
 	# Consultar elevação para pontos únicos (considerando cache)
 	to_query = []
 	query_indices = []
+	cache_hits = 0
+	cache_miss_points = 0
 	for i, pt in enumerate(clustered_points):
 		key = f"{pt[0]:.7f},{pt[1]:.7f}"
 		if enable_cache and key in cache:
+			cache_hits += 1
 			continue
 		to_query.append(pt)
 		query_indices.append(i)
+		cache_miss_points += 1
 
 	# Fazer requisições em lote
 	elevations: List[Optional[float]] = [None] * len(clustered_points)
-	for i in range(0, len(to_query), batch_size):
+	iterator = range(0, len(to_query), batch_size)
+	api_batches = 0
+	start_time = time.time()
+	if show_progress and tqdm is not None:
+		iterator = tqdm(iterator, total=max(1, (len(to_query) + batch_size - 1)//batch_size), desc="Elevations", unit="batch")  # type: ignore
+	for i in iterator:  # type: ignore
+		api_batches += 1
 		batch = to_query[i:i+batch_size]
 		locations = "|".join(f"{lat},{lon}" for lat, lon in batch)
 		params = {"locations": locations}
@@ -158,4 +175,16 @@ def get_elevations(
 				else:
 					results[idx] = None
 
+	end_time = time.time()
+	if _stats is not None:
+		elapsed = max(1e-9, end_time - start_time)
+		_stats.update({
+			"points_total": float(len(points)),
+			"points_clustered": float(len(clustered_points)),
+			"cache_hits": float(cache_hits),
+			"cache_miss_points": float(cache_miss_points),
+			"api_batches": float(api_batches),
+			"elapsed_seconds": elapsed,
+			"points_per_second": float(len(points))/elapsed,
+		})
 	return results

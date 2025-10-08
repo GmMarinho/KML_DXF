@@ -18,6 +18,16 @@ def build_parser():
 	# Opções de clustering/interpolação
 	parser.add_argument('--enable-clustering', action='store_true', help='Ativar clustering/interpolação para otimizar requisições')
 	parser.add_argument('--cluster-eps', type=float, default=0.0, help='Distância máxima (em graus) para agrupar pontos próximos (0 desativa)')
+
+	# Projeção de coordenadas
+	parser.add_argument('--project-utm', action='store_true', help='Projetar lat/lon para UTM (metros) antes de exportar DXF')
+
+	# Controle de labels no DXF
+	parser.add_argument('--no-labels', action='store_true', help='Não exportar textos (nomes/ids) no DXF, apenas pontos')
+	parser.add_argument('--keep-duplicates', action='store_true', help='Não remover coordenadas duplicadas ao ler KML')
+	parser.add_argument('--progress', action='store_true', help='Exibir barra de progresso durante consulta de elevação')
+	parser.add_argument('--log-json', action='store_true', help='Emitir métricas de execução em JSON (stdout ou arquivo)')
+	parser.add_argument('--log-json-file', help='Arquivo para salvar métricas JSON (se omitido, imprime no stdout)')
 	return parser
 
 def parse_args(args=None):

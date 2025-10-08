@@ -1,5 +1,6 @@
 
 from kml_processor import cli, io, elev, transform
+import json, time
 
 def main():
     args = cli.parse_args()
@@ -9,23 +10,42 @@ def main():
     print(f"[CLI] {len(points)} pontos lidos do KML")
     # 2. Consultar elevação
     coords = [(p.lat, p.lon) for p in points]
+    stats = {}
     elevations = elev.get_elevations(
         coords,
         provider=args.dataset,
         batch_size=args.batch_size,
         enable_cache=getattr(args, 'enable_cache', False),
         cache_file=getattr(args, 'cache_file', 'elev_cache.json'),
-        enable_clustering=getattr(args, 'enable_clustering', False),
-        cluster_eps=getattr(args, 'cluster_eps', 0.0)
+        show_progress=getattr(args, 'progress', False),
+        _stats=stats if getattr(args, 'log_json', False) else None
     )
     if args.strict and any(e is None for e in elevations):
         raise RuntimeError("Falha ao obter elevação para todos os pontos (modo --strict)")
-    # 3. Transformar para XYZ
-    xyzs = [transform.to_xyz(p, z if z is not None else 0.0) for p, z in zip(points, elevations)]
+    # 3. Transformar para XYZ (opcionalmente projetar para UTM)
+    project_utm = getattr(args, 'project_utm', False)
+    xyzs = [transform.to_xyz(p, z if z is not None else 0.0, project_to_utm=project_utm) for p, z in zip(points, elevations)]
     # 4. Exportar formatos
     if 'dxf' in args.formats:
         io.write_dxf(args.output, xyzs)
         print(f"[CLI] DXF exportado para {args.output}")
+
+    if getattr(args, 'log_json', False):
+        stats.update({
+            "dataset": args.dataset,
+            "output": args.output,
+            "project_utm": bool(getattr(args, 'project_utm', False)),
+            "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+        })
+        payload = json.dumps(stats, ensure_ascii=False, indent=2)
+        out_file = getattr(args, 'log_json_file', None)
+        if out_file:
+            with open(out_file, 'w', encoding='utf-8') as f:
+                f.write(payload)
+            print(f"[CLI] Métricas JSON salvas em {out_file}")
+        else:
+            print("[CLI][METRICS]" )
+            print(payload)
     # (csv/geojson podem ser implementados depois)
 
 if __name__ == "__main__":

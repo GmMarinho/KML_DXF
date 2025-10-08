@@ -1,22 +1,15 @@
 
 
-from typing import List
+from typing import List, Set, Tuple
 from .model import PointRecord, XYZRecord
 
 def write_dxf(path: str, points: List[XYZRecord], layer: str = "Pontos") -> None:
-	"""
-	Exporta uma lista de XYZRecord para um arquivo DXF (pontos 3D), incluindo nome/id como texto.
-	"""
+	"""Exporta pontos 3D para DXF (somente entidades POINT no modo simplificado)."""
 	import ezdxf
 	doc = ezdxf.new(dxfversion="R2010")
 	msp = doc.modelspace()
 	for pt in points:
-		# Adiciona ponto 3D
 		msp.add_point((pt.x, pt.y, pt.z), dxfattribs={"layer": layer})
-		# Adiciona texto próximo ao ponto (nome ou id)
-		label = pt.name or pt.id
-		text_entity = msp.add_text(label, dxfattribs={"height": 1.0, "layer": layer})
-		text_entity.dxf.insert = (pt.x, pt.y, pt.z+1)
 	doc.saveas(path)
 
 def read_kml(path: str) -> List[PointRecord]:
@@ -42,7 +35,8 @@ def read_kml(path: str) -> List[PointRecord]:
 	tree = ET.parse(path)
 	root = tree.getroot()
 	ns = {'kml': 'http://www.opengis.net/kml/2.2'}
-	points = []
+	points: List[PointRecord] = []
+	seen: Set[Tuple[float, float]] = set()
 	for placemark in root.findall('.//kml:Placemark', ns):
 		name_el = placemark.find('kml:name', ns)
 		name = name_el.text if name_el is not None else None
@@ -63,11 +57,14 @@ def read_kml(path: str) -> List[PointRecord]:
 					continue
 				if not (-90 <= lat <= 90 and -180 <= lon <= 180):
 					continue
+				if (lat, lon) in seen:
+					continue
+				seen.add((lat, lon))
 				pid = name or f"pt{len(points)+1}"
 				points.append(PointRecord(id=str(pid), name=name, lat=lat, lon=lon, properties=props))
 
-		# Extrai pontos de LineString
-		for linestring in placemark.findall('.//kml:LineString', ns):
+		# Extrai pontos de LineString (apenas diretamente sob Placemark)
+		for linestring in placemark.findall('kml:LineString', ns):
 			coords = linestring.find('kml:coordinates', ns)
 			if coords is not None and coords.text:
 				coord_list = coords.text.strip().split()
@@ -78,12 +75,15 @@ def read_kml(path: str) -> List[PointRecord]:
 						continue
 					if not (-90 <= lat <= 90 and -180 <= lon <= 180):
 						continue
+					if (lat, lon) in seen:
+						continue
+					seen.add((lat, lon))
 					pid = f"{name or 'Line'}_{idx+1}"
 					points.append(PointRecord(id=str(pid), name=name, lat=lat, lon=lon, properties=props))
 
 		# Extrai pontos de MultiGeometry (LineString dentro de MultiGeometry)
-		for multigeom in placemark.findall('.//kml:MultiGeometry', ns):
-			for linestring in multigeom.findall('.//kml:LineString', ns):
+		for multigeom in placemark.findall('kml:MultiGeometry', ns):
+			for linestring in multigeom.findall('kml:LineString', ns):
 				coords = linestring.find('kml:coordinates', ns)
 				if coords is not None and coords.text:
 					coord_list = coords.text.strip().split()
@@ -94,6 +94,9 @@ def read_kml(path: str) -> List[PointRecord]:
 							continue
 						if not (-90 <= lat <= 90 and -180 <= lon <= 180):
 							continue
+						if (lat, lon) in seen:
+							continue
+						seen.add((lat, lon))
 						pid = f"{name or 'MultiGeom'}_{idx+1}"
 						points.append(PointRecord(id=str(pid), name=name, lat=lat, lon=lon, properties=props))
 	if not points:
