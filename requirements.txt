@@ -11,15 +11,10 @@ ezdxf==1.4.2              # geração de DXF
 shapely==2.1.1            # geom (futuras validações / buffers / etc.)
 pandas==2.3.3             # exportações tabulares futuras
 
-# --- Elevação / Geo / ML ---
-scikit-learn==1.7.2       # clustering (DBSCAN) para reduzir requisições
+# --- Geo ---
 pyproj==3.7.2             # projeção Lat/Lon -> UTM
 
-# Dependências científicas explicitadas (eram apenas transitivas, agora pinadas)
-numpy==2.3.3              # base numérica (usada por scikit-learn e projeções)
-scipy==1.16.2             # requerido por scikit-learn
-joblib==1.5.2             # utilitário de paralelização (sklearn)
-threadpoolctl==3.6.0      # controle de threads (sklearn)
+# (Removidos: scikit-learn, numpy, scipy, joblib, threadpoolctl – não usados no modo simplificado)
 
 # --- UX / CLI ---
 tqdm==4.66.5              # barra de progresso

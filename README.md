@@ -59,11 +59,10 @@ python main.py \
 
 ## Principais Flags (Modo Atual)
 | Flag | Descrição |
-|------|-----------|
+Ferramenta para ingestão de arquivos KML (incluindo `Point`, `LineString`, `MultiGeometry` aninhada), consulta de elevação via OpenTopoData (datasets como `aster30m`), conversão opcional para coordenadas métricas (UTM) e exportação para DXF (base pronta para CSV/GeoJSON no futuro). Inclui caching, deduplicação automática de coordenadas e testes automatizados.
 | `--input` | Arquivo KML de entrada (obrigatório) |
 | `--output` | Arquivo de saída (ex: `out.dxf`) |
-| `--dataset` | Dataset OpenTopoData (`aster30m`, `etopo`, etc.) |
-| `--batch-size` | Tamanho de lote por chamada (padrão 100) |
+│   ├── elev.py         # cliente OpenTopoData (batch + cache)
 | `--strict` | Falha se alguma elevação não for obtida |
 | `--enable-cache` | Ativa cache local de elevações |
 | `--cache-file` | Caminho do arquivo de cache JSON |
@@ -73,14 +72,14 @@ python main.py \
 | `--log-json` | Emite métricas de execução em JSON (inclui points_per_second) |
 | `--log-json-file` | Caminho para salvar métricas JSON (senão imprime em stdout) |
 
-## Estratégia de Elevação
+  --formats dxf
 - Lotes até 100 pontos → `GET` na API OpenTopoData
 - Retry exponencial em respostas 5xx ou exceções de rede
 - Cache persistente (chave: "lat,lon") para evitar recomputar
 - (Modo simplificado) Sem clustering: cada ponto único é consultado ou recuperado do cache
 
 ### Métricas de Execução (Logging JSON)
-Exemplo de saída com `--log-json`:
+ - Modo simplificado: cada ponto único é consultado ou recuperado do cache (sem clustering)
 ```json
 {
   "points_total": 5001,
@@ -100,16 +99,12 @@ Exemplo de saída com `--log-json`:
 Sem `--project-utm` os valores X/Y estão em graus e Z em metros (escala distorcida em CAD). Com a flag, todos os eixos ficam em metros (EPSG calculado conforme zona).
 
 ## Deduplicação de Coordenadas
-Sempre ativa para evitar pontos repetidos provenientes de múltiplas geometrias (LineString / MultiGeometry). Não há opção de desativação no modo atual.
+Veja `requirements.txt` para versões fixas (requests, ezdxf, pyproj, etc.). Dependências de clustering (scikit-learn e stack científica) foram removidas no modo simplificado.
 
 ## Testes
 ```powershell
 python -m pytest -q
-```
-
-## Próximos Passos (Potenciais)
-- Exportações CSV e GeoJSON
-- Suporte a malha TIN ou GRID
+| (removidos) scikit-learn / numpy / scipy / joblib / threadpoolctl | Não utilizados no modo simplificado |
 - Interpolação interna quando API retornar `None`
 - Validadores de geometria e estatísticas de elevação
 
