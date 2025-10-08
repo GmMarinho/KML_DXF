@@ -6,12 +6,10 @@ import json
 import os
 from typing import List, Tuple, Optional, Dict
 
-from sklearn.cluster import DBSCAN
-
 try:
-	from tqdm import tqdm  # type: ignore
+    from tqdm import tqdm  # type: ignore
 except Exception:  # fallback silencioso
-	tqdm = None  # type: ignore
+    tqdm = None  # type: ignore
 
 def get_elevations(
 	points: List[Tuple[float, float]],
@@ -21,8 +19,6 @@ def get_elevations(
 	max_retries: int = 3,
 	enable_cache: bool = False,
 	cache_file: str = 'elev_cache.json',
-	enable_clustering: bool = False,
-	cluster_eps: float = 0.0,
 	show_progress: bool = False,
 	_stats: Optional[Dict[str, float]] = None
 ) -> List[Optional[float]]:
@@ -42,23 +38,7 @@ def get_elevations(
 		except Exception:
 			cache = {}
 
-	# Estratégia de clustering/interpolação
-	clustered_points = points
-	cluster_map = None
-	if enable_clustering and cluster_eps > 0.0 and len(points) > 1:
-		# DBSCAN para agrupar pontos próximos
-		import numpy as np
-		arr = np.array(points)
-		db = DBSCAN(eps=cluster_eps, min_samples=1, metric='euclidean').fit(arr)
-		labels = db.labels_
-		# Para cada cluster, usar o primeiro ponto como representante
-		cluster_map = {}
-		rep_points = []
-		for idx, label in enumerate(labels):
-			if label not in cluster_map:
-				cluster_map[label] = idx
-				rep_points.append(points[idx])
-		clustered_points = rep_points
+	#
 
 	# Mapear pontos para índices originais
 	point_to_indices = {}
@@ -71,7 +51,7 @@ def get_elevations(
 	query_indices = []
 	cache_hits = 0
 	cache_miss_points = 0
-	for i, pt in enumerate(clustered_points):
+	for i, pt in enumerate(points):
 		key = f"{pt[0]:.7f},{pt[1]:.7f}"
 		if enable_cache and key in cache:
 			cache_hits += 1
@@ -81,7 +61,7 @@ def get_elevations(
 		cache_miss_points += 1
 
 	# Fazer requisições em lote
-	elevations: List[Optional[float]] = [None] * len(clustered_points)
+	elevations: List[Optional[float]] = [None] * len(points)
 	iterator = range(0, len(to_query), batch_size)
 	api_batches = 0
 	start_time = time.time()
@@ -143,44 +123,24 @@ def get_elevations(
 			pass
 
 	# Mapear elevações de volta para todos os pontos originais
-	if enable_clustering and cluster_eps > 0.0 and cluster_map is not None:
-		# Cada ponto original pega a elevação do representante do seu cluster
-		import numpy as np
-		arr = np.array(points)
-		db = DBSCAN(eps=cluster_eps, min_samples=1, metric='euclidean').fit(arr)
-		labels = db.labels_
-		# Para cada ponto original, encontre o representante do cluster
-		for idx, label in enumerate(labels):
-			rep_idx = cluster_map[label]
-			elev = None
-			# Tenta pegar do cache primeiro
-			key = f"{points[rep_idx][0]:.7f},{points[rep_idx][1]:.7f}"
-			if enable_cache and key in cache:
-				elev = cache[key]
-			else:
-				elev = elevations[list(cluster_map.values()).index(rep_idx)]
+	# Cada ponto pega sua elevação (do cache ou da consulta)
+	for idx, pt in enumerate(points):
+		key = f"{pt[0]:.7f},{pt[1]:.7f}"
+		elev = cache.get(key) if enable_cache else None
+		if elev is not None:
 			results[idx] = elev
-	else:
-		# Sem clustering: cada ponto pega sua elevação (do cache ou consulta)
-		for idx, pt in enumerate(points):
-			key = f"{pt[0]:.7f},{pt[1]:.7f}"
-			elev = cache.get(key) if enable_cache else None
-			if elev is not None:
-				results[idx] = elev
+		else:
+			if pt in points:
+				elev_idx = points.index(pt)
+				results[idx] = elevations[elev_idx]
 			else:
-				# Se não estava no cache, buscar na lista de elevs
-				if pt in clustered_points:
-					elev_idx = clustered_points.index(pt)
-					results[idx] = elevations[elev_idx]
-				else:
-					results[idx] = None
+				results[idx] = None
 
 	end_time = time.time()
 	if _stats is not None:
 		elapsed = max(1e-9, end_time - start_time)
 		_stats.update({
 			"points_total": float(len(points)),
-			"points_clustered": float(len(clustered_points)),
 			"cache_hits": float(cache_hits),
 			"cache_miss_points": float(cache_miss_points),
 			"api_batches": float(api_batches),

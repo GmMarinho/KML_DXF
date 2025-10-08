@@ -22,19 +22,20 @@ def main():
     )
     if args.strict and any(e is None for e in elevations):
         raise RuntimeError("Falha ao obter elevação para todos os pontos (modo --strict)")
-    # 3. Transformar para XYZ (opcionalmente projetar para UTM)
-    project_utm = getattr(args, 'project_utm', False)
-    xyzs = [transform.to_xyz(p, z if z is not None else 0.0, project_to_utm=project_utm) for p, z in zip(points, elevations)]
-    # 4. Exportar formatos
-    if 'dxf' in args.formats:
-        io.write_dxf(args.output, xyzs)
-        print(f"[CLI] DXF exportado para {args.output}")
+    # 3. Transformar para XYZ (sempre projetando para UTM)
+    xyzs = [transform.to_xyz(p, z if z is not None else 0.0) for p, z in zip(points, elevations)]
+    # Depuração: imprimir estatísticas dos valores de Z
+    zs = [pt.z for pt in xyzs]
+    print(f"[DEBUG] Z min: {min(zs):.2f}, max: {max(zs):.2f}, únicos: {sorted(set(zs))[:10]} ... total únicos: {len(set(zs))}")
+    # 4. Exportar DXF
+    io.write_dxf(args.output, xyzs)
+    print(f"[CLI] DXF exportado para {args.output}")
 
     if getattr(args, 'log_json', False):
         stats.update({
             "dataset": args.dataset,
             "output": args.output,
-            "project_utm": bool(getattr(args, 'project_utm', False)),
+            "utm": True,
             "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
         })
         payload = json.dumps(stats, ensure_ascii=False, indent=2)
@@ -46,7 +47,7 @@ def main():
         else:
             print("[CLI][METRICS]" )
             print(payload)
-    # (csv/geojson podem ser implementados depois)
+    # ...existing code...
 
 if __name__ == "__main__":
     main()

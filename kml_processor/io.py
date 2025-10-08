@@ -3,13 +3,13 @@
 from typing import List, Set, Tuple
 from .model import PointRecord, XYZRecord
 
-def write_dxf(path: str, points: List[XYZRecord], layer: str = "Pontos") -> None:
-	"""Exporta pontos 3D para DXF (somente entidades POINT no modo simplificado)."""
+def write_dxf(path: str, points: List[XYZRecord]) -> None:
+	"""Exporta apenas pontos 3D para DXF (entidades POINT, sem labels, polilinhas ou layers extras)."""
 	import ezdxf
 	doc = ezdxf.new(dxfversion="R2010")
 	msp = doc.modelspace()
 	for pt in points:
-		msp.add_point((pt.x, pt.y, pt.z), dxfattribs={"layer": layer})
+		msp.add_point((pt.x, pt.y, pt.z))
 	doc.saveas(path)
 
 def read_kml(path: str) -> List[PointRecord]:

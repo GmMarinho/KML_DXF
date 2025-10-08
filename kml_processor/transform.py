@@ -24,16 +24,9 @@ def latlon_to_utm(lat: float, lon: float) -> Tuple[float, float]:
 	return x, y
 
 
-def to_xyz(record: PointRecord, elevation: float, project_to_utm: bool = False) -> XYZRecord:
-	"""Converte PointRecord + elevação em XYZRecord.
-
-	Por padrão X/Y são lat/lon (graus). Se project_to_utm=True, converte para metros (UTM).
-	"""
-	if project_to_utm:
-		x, y = latlon_to_utm(record.lat, record.lon)
-	else:
-		x, y = record.lat, record.lon
-
+def to_xyz(record: PointRecord, elevation: float) -> XYZRecord:
+	"""Converte PointRecord + elevação em XYZRecord (sempre UTM metros)."""
+	x, y = latlon_to_utm(record.lat, record.lon)
 	return XYZRecord(
 		id=record.id,
 		name=record.name,

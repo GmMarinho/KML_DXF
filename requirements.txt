@@ -1,18 +1,15 @@
 ############################################################
 # Requisitos do projeto KML_DXF
 # Ambiente alvo: Python >= 3.11 (testado em 3.13)
-# Nota: versões fixas para reprodutibilidade. Ajuste conforme necessário.
+# Versões fixas para reprodutibilidade. Ajuste conforme necessário.
 ############################################################
 
 # --- Core HTTP / Parsing ---
 requests==2.32.5          # chamadas à API OpenTopoData
 ezdxf==1.4.2              # geração de DXF
-# (Removidos: simplekml, shapely, pandas – não usados no modo simplificado)
 
 # --- Geo ---
 pyproj==3.7.2             # projeção Lat/Lon -> UTM
-
-# (Removidos: scikit-learn, numpy, scipy, joblib, threadpoolctl – não usados no modo simplificado)
 
 # --- UX / CLI ---
 tqdm==4.66.5              # barra de progresso
@@ -20,13 +17,7 @@ tqdm==4.66.5              # barra de progresso
 # --- Testes ---
 pytest==7.4.0             # suíte de testes
 
-# --- Qualidade (instalar manualmente se quiser) ---
+# --- Qualidade (opcional/manual) ---
 # ruff==0.6.9
 # flake8==7.1.1
-
-############################################################
-# Observações:
-# - Se quiser reduzir tamanho: remover simplekml e shapely se não forem usados.
-# - Para builds estritos, gerar um constraints.txt com hashes (pip-compile).
-# - Atualizações de scikit-learn podem exigir ajuste nas versões de numpy/scipy.
 ############################################################

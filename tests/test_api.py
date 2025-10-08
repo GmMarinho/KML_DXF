@@ -1,4 +1,4 @@
-# Teste de integração da API OpenTopoData (modo simplificado, sem clustering)
+# Teste de integração da API OpenTopoData
 import os
 import pytest
 from kml_processor import io, elev
