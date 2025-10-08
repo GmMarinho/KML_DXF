@@ -10,6 +10,14 @@ def build_parser():
 	parser.add_argument('--batch-size', type=int, default=100, help='Tamanho do lote para API de elevação')
 	parser.add_argument('--strict', action='store_true', help='Abortar se houver falha de elevação')
 	parser.add_argument('--formats', nargs='+', default=['dxf'], help='Formatos de saída: dxf, csv, geojson')
+
+	# Opções de cache
+	parser.add_argument('--enable-cache', action='store_true', help='Ativar cache local de elevações (JSON)')
+	parser.add_argument('--cache-file', default='elev_cache.json', help='Arquivo de cache JSON para elevações')
+
+	# Opções de clustering/interpolação
+	parser.add_argument('--enable-clustering', action='store_true', help='Ativar clustering/interpolação para otimizar requisições')
+	parser.add_argument('--cluster-eps', type=float, default=0.0, help='Distância máxima (em graus) para agrupar pontos próximos (0 desativa)')
 	return parser
 
 def parse_args(args=None):

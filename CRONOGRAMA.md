@@ -103,13 +103,13 @@ Milestone 5 — CLI, documentação e exemplos (1 dia)
 
 Milestone 6 — Testes de integração e CI (1–2 dias)
 -----------------------------------------------
-- [ ] Adicionar workflow CI (`.github/workflows/ci.yml`) com etapas:
-   - [ ] Setup Python
-   - [ ] Install dependencies
-   - [ ] Lint (ruff/flake8)
-   - [ ] Run pytest
-- [ ] Rodar pipeline localmente e ajustar falhas.
-- [ ] Critério de aceitação: workflow CI passa em PR.
+- [x] Adicionar workflow CI (`.github/workflows/ci.yml`) com etapas:
+   - [x] Setup Python
+   - [x] Install dependencies
+   - [x] Lint (ruff/flake8)
+   - [x] Run pytest
+- [x] Rodar pipeline localmente e ajustar falhas.
+- [x] Critério de aceitação: workflow CI passa em PR.
 
 Milestone 7 — Extras e entrega (opcional, 1–2 dias)
 -------------------------------------------------
