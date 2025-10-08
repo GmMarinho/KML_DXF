@@ -115,10 +115,7 @@ Veja `requirements.txt` para versões fixas (requests, ezdxf, pyproj, scikit-lea
 | Pacote | Uso |
 |--------|-----|
 | requests | Chamadas HTTP à API OpenTopoData |
-| simplekml | Compatibilidade futura com manipulação KML (parse atual é XML manual) |
-| ezdxf | Criação de entidades DXF (pontos + texto) |
-| shapely | Possíveis operações geométricas futuras (validação, buffers) |
-| pandas | Base para futuros exports CSV/GeoJSON estruturados |
+| ezdxf | Criação de entidades DXF (pontos) |
 | scikit-learn | (Opcional / legado) clustering – não utilizado no modo simplificado atual |
 | pyproj | Conversão Lat/Lon → UTM (escala correta no CAD) |
 | numpy | Base numérica (suporte a sklearn / pyproj) |
@@ -128,7 +125,7 @@ Veja `requirements.txt` para versões fixas (requests, ezdxf, pyproj, scikit-lea
 | tqdm | Barra de progresso de batches de elevação |
 | pytest | Testes automatizados |
 
-Remoção segura potencial: `simplekml`, `shapely` (se nenhuma transformação extra for usada). Avaliar antes de produção minimalista.
+Dependências podadas: `simplekml`, `shapely`, `pandas` (remoção para footprint mínimo). Reintroduza apenas quando realmente necessário.
 
 ## Contribuição
 PRs e issues são bem-vindos. Abra uma issue descrevendo seu caso de uso ou melhoria desejada.

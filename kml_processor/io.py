@@ -17,20 +17,10 @@ def read_kml(path: str) -> List[PointRecord]:
 	Lê um arquivo KML e retorna uma lista de PointRecord.
 	Lança ValueError se não encontrar pontos válidos.
 	"""
-	import simplekml
 	import os
 	if not os.path.exists(path):
 		raise FileNotFoundError(f"Arquivo não encontrado: {path}")
-	kml = simplekml.Kml()
-	# simplekml só lê arquivos via from_file
-	kml = simplekml.Kml()
-	kml = simplekml.Kml()
-	kml = simplekml.Kml()
-	# Usar o método from_file para ler o arquivo
-	kml = simplekml.Kml()
-	kml = simplekml.Kml()
-	# simplekml não tem parsing de arquivo pronto, então parse manual
-	# Vamos fazer parsing manual do XML para extrair os pontos
+	# Parsing manual de XML (não dependemos mais de simplekml)
 	import xml.etree.ElementTree as ET
 	tree = ET.parse(path)
 	root = tree.getroot()
