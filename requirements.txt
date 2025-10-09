@@ -18,6 +18,4 @@ tqdm==4.66.5              # barra de progresso
 pytest==7.4.0             # suíte de testes
 
 # --- Qualidade (opcional/manual) ---
-# ruff==0.6.9
-# flake8==7.1.1
 ############################################################
