@@ -1,0 +1,9 @@
+# Ignore DXF, caches e métricas geradas na raiz de examples
+*.dxf
+metrics_*.json
+elev_cache_*.json
+
+# Mas mantenha as subpastas organizadas
+!/dxf/
+!/cache/
+!/metrics/

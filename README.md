@@ -127,3 +127,10 @@ PRs e issues são bem-vindos. Abra uma issue descrevendo seu caso de uso ou melh
 
 ---
 Gerado e mantido como parte de um fluxo iterativo orientado a testes e automações CI.
+
+## Organização recomendada em `examples/`
+- `examples/dxf/`: saídas DXF geradas pelo pipeline
+- `examples/cache/`: caches de elevação (`elev_cache_*.json`)
+- `examples/metrics/`: métricas de execução (`metrics_*.json`)
+
+Um `.gitignore` mantém os artefatos na raiz de `examples` ignorados e preserva a estrutura via `.gitkeep`.
