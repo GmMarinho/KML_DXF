@@ -1,0 +1,37 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+
+# Test cache
+.pytest_cache/
+
+# Virtual environments (keep only .venv as canonical)
+.venv/
+venv/
+nome_da_venv/
+env/
+ENV/
+.conda/
+
+# Editors/IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project outputs and runtime artifacts
+# DXF outputs (generated)
+examples/*_out*.dxf
+examples/out*.dxf
+examples/dxf/*.dxf
+
+# Elevation caches and metrics (generated)
+examples/elev_cache_*.json
+examples/metrics_*.json
+examples/cache/*.json
+examples/metrics/*.json
