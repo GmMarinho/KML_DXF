@@ -1,7 +1,7 @@
 # KML_DXF – Pipeline KML → Elevação → XYZ → DXF (Escala Correta/UTM)
 
 ## Visão Geral
-Ferramenta para ingestão de arquivos KML (incluindo `Point`, `LineString`, `MultiGeometry` aninhada), consulta de elevação via OpenTopoData (datasets como `aster30m`), projeção UTM obrigatória e exportação exclusiva para DXF 3D. Inclui caching, deduplicação automática de coordenadas e testes automatizados.
+Ferramenta para ingestão de arquivos KML (incluindo `Point`, `LineString`, `MultiGeometry` aninhada), consulta de elevação via OpenTopoData (dataset recomendado: `srtm30m`), projeção UTM obrigatória e exportação exclusiva para DXF 3D. Inclui caching, deduplicação automática de coordenadas e testes automatizados.
 
 ## Principais Recursos (Modo Simplificado)
 - Suporte a KML real (pontos + linhas + multigeometrias aninhadas)
@@ -42,7 +42,7 @@ pip install -r requirements.txt
 
 ## Uso Básico
 ```powershell
-python main.py --input examples/sample.kml --output examples/out.dxf --dataset aster30m
+python main.py --input examples/sample.kml --output examples/out.dxf --dataset srtm30m
 ```
 
 ## Uso Avançado (com cache)
@@ -50,8 +50,8 @@ python main.py --input examples/sample.kml --output examples/out.dxf --dataset a
 python main.py \
   --input examples/rionovo.kml \
   --output examples/rionovo_out.dxf \
-  --dataset aster30m \
-  --enable-cache --cache-file examples/elev_cache_rionovo.json \
+  --dataset srtm30m \
+  --enable-cache --cache-file examples/elev_cache_rionovo_srtm.json \
   --progress
 ```
 
@@ -61,7 +61,7 @@ python main.py \
 |-------------------|--------------------------------------------------|
 | `--input`         | Arquivo KML de entrada (obrigatório)              |
 | `--output`        | Arquivo de saída DXF 3D (ex: `out.dxf`)           |
-| `--dataset`       | Dataset OpenTopoData (`aster30m`, `etopo`, etc.) |
+| `--dataset`       | Dataset OpenTopoData (`srtm30m`, `aster30m`, `etopo`, etc.) |
 | `--batch-size`    | Tamanho do lote para API de elevação             |
 | `--strict`        | Falha se alguma elevação não for obtida          |
 | `--enable-cache`  | Ativa cache local de elevações                   |
@@ -86,7 +86,7 @@ python main.py \
   "api_batches": 3,
   "elapsed_seconds": 12.53,
   "points_per_second": 399.28,
-  "dataset": "aster30m",
+  "dataset": "srtm30m",
   "output": "examples/rionovo_out.dxf",
   "utm": true,
   "timestamp": "2025-10-08T12:34:56Z"
@@ -127,10 +127,3 @@ PRs e issues são bem-vindos. Abra uma issue descrevendo seu caso de uso ou melh
 
 ---
 Gerado e mantido como parte de um fluxo iterativo orientado a testes e automações CI.
-
-## Organização recomendada em `examples/`
-- `examples/dxf/`: saídas DXF geradas pelo pipeline
-- `examples/cache/`: caches de elevação (`elev_cache_*.json`)
-- `examples/metrics/`: métricas de execução (`metrics_*.json`)
-
-Um `.gitignore` mantém os artefatos na raiz de `examples` ignorados e preserva a estrutura via `.gitkeep`.

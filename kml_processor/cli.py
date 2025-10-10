@@ -6,7 +6,7 @@ def build_parser():
 	parser = argparse.ArgumentParser(description="Pipeline KML → XYZ → DXF 3D")
 	parser.add_argument('--input', '-i', required=True, help='Arquivo KML de entrada')
 	parser.add_argument('--output', '-o', required=True, help='Arquivo de saída (ex: out.dxf)')
-	parser.add_argument('--dataset', default='etopo', help='Dataset OpenTopoData (ex: srtm90m, etopo)')
+	parser.add_argument('--dataset', default='srtm30m', help='Dataset OpenTopoData (ex: srtm30m, aster30m, etopo)')
 	parser.add_argument('--batch-size', type=int, default=100, help='Tamanho do lote para API de elevação')
 	parser.add_argument('--strict', action='store_true', help='Abortar se houver falha de elevação')
 	# ...existing code...
