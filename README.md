@@ -1,43 +1,42 @@
-# Conversor KML para DXF
+# KML_DXF
 
-Este projeto converte arquivos KML (com geometrias Point, LineString e Polygon/LinearRing, incluindo latitude, longitude e elevação) em arquivos DXF 3D, utilizando uma interface gráfica simples para Windows.
+Conversor de arquivos KML para DXF com interface gráfica (Tkinter).
 
 ## Funcionalidades
-- Suporte a arquivos KML contendo:
-  - Pontos (Point)
-  - Linhas (LineString)
-  - Polígonos (Polygon/LinearRing)
-- Conversão automática de coordenadas geográficas (lat/lon) para UTM.
-- Preserva a elevação (Z) de cada ponto.
-- Gera entidades 3D no DXF (POINT, POLYLINE 3D).
-- Interface gráfica amigável (PySimpleGUI).
-- Aviso ao usuário se todas as altitudes forem zero ou muito pequenas.
+- Seleção de arquivo KML e destino DXF via interface
+- Conversão de pontos, linhas e polígonos do KML para DXF
+- Pontos e polilinhas categorizados em layers conforme o nome (NUMERO, ALFANUM, LETRA, OUTRO)
+- Log detalhado do processo salvo em arquivo TXT junto ao DXF
+- Compatível com Windows
 
 ## Como usar
 1. Instale as dependências:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Execute o script:
-   ```bash
-   python kml_para_dxf.py
-   ```
-3. Na interface, selecione o arquivo KML de entrada e o local para salvar o DXF de saída.
-4. Clique em "Converter". O status será exibido na tela.
+  ```bash
+  pip install -r requirements.txt
+  ```
+2. Execute o programa:
+  ```bash
+  python kml_2_dxf.py
+  ```
+3. Selecione o arquivo KML e o destino do DXF na interface.
+4. Clique em "Converter". O DXF e o log serão salvos no local escolhido.
 
-## Empacotando como .exe (opcional)
-Para criar um executável Windows:
-```bash
-pip install pyinstaller
-pyinstaller --onefile --windowed kml_para_dxf.py
-```
-O executável estará em `dist/kml_para_dxf.exe`.
+## Como gerar o executável (.exe)
+1. Instale o PyInstaller:
+  ```bash
+  pip install pyinstaller
+  ```
+2. Gere o executável:
+  ```bash
+  pyinstaller --onefile kml_2_dxf.py
+  ```
 
 ## Exemplo de KML suportado
 ```xml
 <Placemark>
   <LineString>
-    <coordinates>
+   <coordinates>
+
       -43.2096,-22.9035,10 -43.2097,-22.9036,12
     </coordinates>
   </LineString>
@@ -49,11 +48,13 @@ O executável estará em `dist/kml_para_dxf.exe`.
 - Se todas as altitudes forem zero ou muito pequenas, um aviso será exibido.
 - O script suporta múltiplos Placemarks e múltiplas geometrias por arquivo.
 
-## Bibliotecas utilizadas
-- PySimpleGUI
+## Dependências
 - ezdxf
 - utm
-- xml.etree.ElementTree (padrão Python)
+- Tkinter (nativo do Python)
 
 ## Licença
 MIT
+
+## Autor
+[GmMarinho](https://github.com/GmMarinho)
