@@ -1,3 +1,4 @@
+
 # KML_DXF
 
 Conversor de arquivos KML para DXF com interface gráfica (Tkinter).
@@ -16,7 +17,7 @@ Conversor de arquivos KML para DXF com interface gráfica (Tkinter).
   ```
 2. Execute o programa:
   ```bash
-  python kml_2_dxf.py
+  python kml_dxf.py
   ```
 3. Selecione o arquivo KML e o destino do DXF na interface.
 4. Clique em "Converter". O DXF e o log serão salvos no local escolhido.
@@ -28,7 +29,7 @@ Conversor de arquivos KML para DXF com interface gráfica (Tkinter).
   ```
 2. Gere o executável:
   ```bash
-  pyinstaller --onefile kml_2_dxf.py
+  pyinstaller --onefile kml_dxf.py
   ```
 
 ## Exemplo de KML suportado
