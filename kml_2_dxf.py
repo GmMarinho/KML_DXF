@@ -20,6 +20,8 @@ def extrair_coordenadas_kml(arquivo_kml):
                 if len(partes) >= 2:
                     lon, lat = float(partes[0]), float(partes[1])
                     elev = float(partes[2]) if len(partes) > 2 else 0.0
+                    if abs(elev) < 0.01:
+                        elev = 0.0
                     pontos.append((lon, lat, elev))
         # LineString
         for ls in placemark.findall('.//kml:LineString/kml:coordinates', ns):
@@ -29,6 +31,8 @@ def extrair_coordenadas_kml(arquivo_kml):
                 if len(partes) >= 2:
                     lon, lat = float(partes[0]), float(partes[1])
                     elev = float(partes[2]) if len(partes) > 2 else 0.0
+                    if abs(elev) < 0.01:
+                        elev = 0.0
                     linha_coords.append((lon, lat, elev))
             if linha_coords:
                 linhas.append(linha_coords)
@@ -40,6 +44,8 @@ def extrair_coordenadas_kml(arquivo_kml):
                 if len(partes) >= 2:
                     lon, lat = float(partes[0]), float(partes[1])
                     elev = float(partes[2]) if len(partes) > 2 else 0.0
+                    if abs(elev) < 0.01:
+                        elev = 0.0
                     poly_coords.append((lon, lat, elev))
             if poly_coords:
                 poligonos.append(poly_coords)
