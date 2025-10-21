@@ -44,6 +44,39 @@ Conversor de arquivos KML para DXF com interface gráfica (Tkinter).
 </Placemark>
 ```
 
+### Exemplo de KML com ponto
+```xml
+<Placemark>
+  <name>Ponto1</name>
+  <Point>
+    <coordinates>-35.20989232587857,-5.839852418981317,10</coordinates>
+  </Point>
+</Placemark>
+```
+
+### Exemplo de KML com polígono
+```xml
+<Placemark>
+  <name>Poligono1</name>
+  <Polygon>
+    <outerBoundaryIs>
+      <LinearRing>
+        <coordinates>
+          -43.2096,-22.9035,10 -43.2097,-22.9036,12 -43.2098,-22.9037,15 -43.2096,-22.9035,10
+        </coordinates>
+      </LinearRing>
+    </outerBoundaryIs>
+  </Polygon>
+</Placemark>
+```
+
+## Exemplo de uso
+1. Abra o programa com `python kml_dxf.py`
+2. Selecione um arquivo KML de entrada e o destino do DXF
+3. Clique em "Converter"
+4. O log do processo será exibido na interface e salvo junto ao DXF
+
+
 ## Observações
 - O DXF gerado utiliza o sistema de coordenadas UTM correspondente à latitude/longitude dos pontos.
 - Se todas as altitudes forem zero ou muito pequenas, um aviso será exibido.
@@ -59,3 +92,6 @@ MIT
 
 ## Autor
 [GmMarinho](https://github.com/GmMarinho)
+
+## API para verficação
+https://developers.google.com/maps/documentation/earth?hl=pt-BR
